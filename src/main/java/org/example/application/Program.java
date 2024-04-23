@@ -1,17 +1,17 @@
 package org.example.application;
 
 import org.example.entities.Employee;
+import org.example.util.EmployeePredicate;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Program {
     public static void main(String[] args) {
+        //home/vitor/temp/Employee.txt
 
 
         // Define o padrão de localização para Estados Unidos, afetando formatos de números, datas, etc.
@@ -22,6 +22,10 @@ public class Program {
         // Solicita ao usuário para inserir o caminho do arquivo e lê essa entrada
         System.out.print("Entre com o caminho da pasta: ");
         String path = sc.nextLine();
+
+        System.out.print("Entre com o salario minimo: ");
+        Double min = sc.nextDouble();
+
 
         // Tenta abrir o arquivo no caminho especificado
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -39,9 +43,20 @@ public class Program {
                 line = br.readLine();
             }
 
+            Comparator<String> comp = (s1, s2) -> s1.toUpperCase().compareTo(s2.toUpperCase());
 
+            List<String> email = list.stream()
+                    .filter(p -> p.getSalary() > min)
+                    .map( p -> p.getEmail())
+                    .sorted(comp)
+                    .collect(Collectors.toList());
 
+            email.forEach(System.out::println);
 
+            EmployeePredicate ep = new EmployeePredicate();
+
+            double sum = ep.filteredSum(list, p -> p.getName().charAt(0) == 'M');
+            System.out.println("Sum of salary of people whose name starts with 'M': " + String.format("%.2f", sum));
 
 
 
